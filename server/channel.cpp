@@ -88,7 +88,7 @@ void Channel::run_client(int client_sock, int idx)
 		while(!msg_queue.empty())
 		{
 			const string& msg = msg_queue.front();
-			printf("%s", msg.c_str());
+			printf("%s\n", msg.c_str());
 			if(msg.compare(0, 6, "create") == 0)
 			{
 				client_status[idx].first = msg.c_str() + 7;
