@@ -67,14 +67,14 @@ void CCDC::start()
 
 		while(!msg_queue.empty())
 		{
-			const string& msg = msg_queue.front();
+			string msg = msg_queue.front();
+			msg_queue.pop();
 			if(msg.compare(0, 6, "status") == 0)
 			{
 				msg += " ";
 				get_status(msg);
 				send_message(msg);
 			}
-			msg_queue.pop();
 		}
 	}
 
