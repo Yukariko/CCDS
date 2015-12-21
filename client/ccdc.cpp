@@ -68,6 +68,7 @@ void CCDC::start()
 		while(!msg_queue.empty())
 		{
 			const string& cmd = msg_queue.front();
+			printf(cmd.c_str());
 			if(cmd.compare(0, 6, "status") == 0)
 			{
 				string msg = cmd;
