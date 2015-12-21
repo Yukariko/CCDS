@@ -74,7 +74,8 @@ void CCDC::start()
 				string msg = cmd;
 				msg.back() = ' ';
 				get_status(msg);
-				send_message(msg);
+				if(send_message(msg) == false)
+					break;
 			}
 			msg_queue.pop();
 		}

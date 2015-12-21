@@ -92,10 +92,12 @@ void Channel::run_client(int client_sock, int idx)
 			if(msg.compare(0, 6, "create") == 0)
 			{
 				client_status[idx].first = msg.c_str() + 7;
+				printf("client %d name %s\n", idx, client_status[idx].first.c_str());
 			}
 			else if(msg.compare(0, 6, "status") == 0)
 			{
-				client_status[idx].first = atoi(msg.c_str() + 7);
+				client_status[idx].second = atoi(msg.c_str() + 7);
+				printf("client %d status %d\n", idx, client_status[idx].second);
 			}
 
 			msg_queue.pop();
