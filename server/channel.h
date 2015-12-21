@@ -18,7 +18,7 @@ public:
 	
 	const vector<pair<string,int>>& get_client_status();
 
-	bool send_message(const string& msg);
+	bool send_message(int client_sock, const string& msg);
 
 private:
 	static vector<thread> client_threads;

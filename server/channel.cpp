@@ -88,7 +88,7 @@ void Channel::run_client(int client_sock, int idx)
 		while(!msg_queue.empty())
 		{
 			const string& msg = msg_queue.front();
-			printf(msg.c_str());
+			printf("%s", msg.c_str());
 			if(msg.compare(0, 6, "create") == 0)
 			{
 				client_status[idx].first = msg.c_str() + 7;
@@ -101,13 +101,13 @@ void Channel::run_client(int client_sock, int idx)
 			msg_queue.pop();
 		}
 		while(10);
-		send_message("status\n");
+		send_message(client_sock, "status\n");
 	}
 }
 
-bool Channel::send_message(const string& msg)
+bool Channel::send_message(int client_sock, const string& msg)
 {
-	bool res = send(sock, msg.c_str(), msg.length(), 0) > 0;
+	bool res = send(client_sock, msg.c_str(), msg.length(), 0) > 0;
 	if(!res)
 	{
 		string error = "send_message_fail " + msg;
