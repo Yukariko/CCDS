@@ -86,5 +86,5 @@ void CCDC::start()
 void CCDC::get_status(string& msg)
 {
 	//to do
-	msg += "1";
+	msg += "1\n";
 }
