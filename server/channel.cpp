@@ -59,7 +59,7 @@ void Channel::start()
 	int idx = 0;
 	while((ns = accept(sock, (struct sockaddr *)&cli,  (socklen_t *)&clientlen)) != -1)
 	{
-		printf("client %d connect!\n", idx);
+		printf("client %d connected!\n", idx);
 		client_status.push_back({"", 0});
 		client_threads.push_back(thread(&Channel::run_client, this, ns, idx));
 		idx++;
@@ -101,8 +101,11 @@ void Channel::run_client(int client_sock, int idx)
 			msg_queue.pop();
 		}
 		sleep(10);
-		send_message(client_sock, "status\n");
+		if(send_message(client_sock, "status\n") == false)
+			break;
 	}
+
+	printf("client %d connection close\n", idx);
 }
 
 bool Channel::send_message(int client_sock, const string& msg)
