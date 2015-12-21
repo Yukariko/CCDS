@@ -52,7 +52,7 @@ bool CCDC::send_message(const string& msg)
 
 void CCDC::start()
 {
-	string msg = "create " + volume = "\n";
+	string msg = "create " + volume + "\n";
 	send_message(msg);
 
 	char buf[4096];
@@ -67,14 +67,14 @@ void CCDC::start()
 
 		while(!msg_queue.empty())
 		{
-			string msg = msg_queue.front();
-			msg_queue.pop();
-			if(msg == "status")
+			const string& msg = msg_queue.front();
+			if(msg.compare(0, 6, "status") == 0)
 			{
 				msg += " ";
 				get_status(msg);
 				send_message(msg);
 			}
+			msg_queue.pop();
 		}
 	}
 

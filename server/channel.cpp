@@ -59,6 +59,7 @@ void Channel::start()
 	int idx = 0;
 	while((ns = accept(sock, (struct sockaddr *)&cli,  (socklen_t *)&clientlen)) != -1)
 	{
+		printf("client %d connect!\n", idx);
 		client_status.push_back({"", 0});
 		client_threads.push_back(thread(&Channel::run_client, this, ns, idx));
 		idx++;
@@ -87,11 +88,11 @@ void Channel::run_client(int client_sock, int idx)
 		while(!msg_queue.empty())
 		{
 			const string& msg = msg_queue.front();
-			if(msg == "create")
+			if(msg.compare(0, 6, "create") == 0)
 			{
 				client_status[idx].first = msg.c_str() + 7;
 			}
-			else if(msg == "status")
+			else if(msg.compare(0, 6, "status") == 0)
 			{
 				client_status[idx].first = atoi(msg.c_str() + 7);
 			}
