@@ -1,0 +1,28 @@
+INCLUDEDIRS = \
+
+LIBDIRS = \
+
+LIBS = \
+	-lpthread
+
+CXX = g++
+
+CPPFLAGS = -Wall -O -std=c++11 -g $(INCLUDEDIRS)
+LDFLAGS =  $(LIBDIRS) $(LIBS)
+
+bin = ccds
+
+t1 = main
+t2 = ccds
+t3 = msg_queue
+t4 = channel
+
+obj = $(t1).o $(t2).o $(t3).o $(t4).o
+
+all: $(bin)
+$(bin): $(obj)
+		$(CXX) $(CPPFLAGS) $(obj) $(LDFLAGS) -o $@
+
+clean:
+		rm -f $(bin) *.o
+

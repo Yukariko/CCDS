@@ -19,7 +19,7 @@ void CCDS::start()
 	{
 		sleep(5);
 
-		auto &status = channel->clientStatus;
+		auto &status = channel->get_client_status();
 		int N = status.size();
 		for(int i=0; i < N; i++)
 		{

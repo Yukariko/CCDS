@@ -4,12 +4,14 @@
 #include <cstdlib>
 #include <cstdio>
 #include <cstring>
+
+#include "msg_queue.h"
 #include "channel.h"
 
 int Channel::sock;
 int Channel::port;
-vector<thread> Channel::clientThreads;
-vector<pair<string,int>> Channel::clientStatus;
+vector<thread> Channel::client_threads;
+vector<pair<string,int>> Channel::client_status;
 
 Channel::Channel(int port)
 {
@@ -57,10 +59,15 @@ void Channel::start()
 	int idx = 0;
 	while((ns = accept(sock, (struct sockaddr *)&cli,  (socklen_t *)&clientlen)) != -1)
 	{
-		clientStatus.push_back({"", 0});
-		clientThreads.push_back(thread(&Channel::run_client, this, ns, idx));
+		client_status.push_back({"", 0});
+		client_threads.push_back(thread(&Channel::run_client, this, ns, idx));
 		idx++;
 	}
+}
+
+const vector<pair<string,int>>&  Channel::get_client_status()
+{
+	return client_status;
 }
 
 void Channel::run_client(int client_sock, int idx)
@@ -82,11 +89,11 @@ void Channel::run_client(int client_sock, int idx)
 			const string& msg = msg_queue.front();
 			if(msg == "create")
 			{
-				clientStatus[idx].first = msg.c_str() + 7;
+				client_status[idx].first = msg.c_str() + 7;
 			}
 			else if(msg == "status")
 			{
-				clientStatus[idx].first = atoi(msg.c_str() + 7);
+				client_status[idx].first = atoi(msg.c_str() + 7);
 			}
 
 			msg_queue.pop();
