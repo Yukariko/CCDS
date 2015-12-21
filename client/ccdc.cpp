@@ -3,7 +3,7 @@
 #include <sys/socket.h>
 #include <cstdlib>
 #include <cstdio>
-
+#include <cstring>
 #include "ccdc.h"
 
 CCDC::CCDC(const string& ip, int port, const string& volume)
@@ -81,8 +81,8 @@ void CCDC::start()
 	perror("connection close");
 }
 
-void CCDC::get_status()
+void CCDC::get_status(string& msg)
 {
 	//to do
-	return 1;
+	msg += "1";
 }
