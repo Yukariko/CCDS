@@ -100,7 +100,7 @@ void Channel::run_client(int client_sock, int idx)
 
 			msg_queue.pop();
 		}
-		while(10);
+		sleep(10);
 		send_message(client_sock, "status\n");
 	}
 }
