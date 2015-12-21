@@ -7,6 +7,7 @@ void MessageQueue::push(const char *buf, int len)
 		last_msg += buf[i];
 		if(buf[i] == '\n')
 		{
+			last_msg.back() = '\0';
 			msg_queue.push(last_msg);
 			last_msg = "";
 		}

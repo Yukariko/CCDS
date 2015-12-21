@@ -72,7 +72,7 @@ void CCDC::start()
 			if(cmd.compare(0, 6, "status") == 0)
 			{
 				string msg = cmd;
-				msg.back() = ' ';
+				msg += ' ';
 				get_status(msg);
 				if(send_message(msg) == false)
 					break;
