@@ -45,7 +45,7 @@ bool CCDC::send_message(const Parser& msg)
 	bool res = send(sock, buf.c_str(), buf.length(), 0) > 0;
 	if(!res)
 	{
-		string error = "send_message_fail " + msg;
+		string error = "send_message_fail " + buf;
 		perror(error.c_str());
 	}
 	return res;
@@ -69,7 +69,7 @@ void CCDC::start()
 		{
 			Parser cmd = Parser(msg_queue.front());
 			msg_queue.pop();
-			if(cmd.get_protocol() == "status"))
+			if(cmd.get_protocol() == "status")
 				proc_status(cmd);
 			else if(cmd.get_protocol() == "change")
 				proc_change(cmd);
@@ -87,11 +87,7 @@ string CCDC::get_status()
 
 void CCDC::proc_status(const Parser& cmd)
 {
-	Parser msg;
-	msg.set_protocol("status");
-	msg.set_value(get_status());
-
-	send_message(msg);
+	send_message(Parser("status", get_status()));
 }
 
 void CCDC::proc_change(const Parser& cmd)
