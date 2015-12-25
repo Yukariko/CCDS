@@ -5,6 +5,7 @@
 #include <unordered_map>
 #include "msg_queue.h"
 #include "parser.h"
+#include "eio.h"
 
 using namespace std;
 
