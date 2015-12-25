@@ -6,11 +6,11 @@
 #include <cstring>
 #include "ccdc.h"
 
-CCDC::CCDC(const string& ip, int port, const string& volume)
+CCDC::CCDC(const string& ip, int port, const string& lv_name)
 {
 	this->ip = ip;
 	this->port = port;
-	this->volume = volume;
+	this->lv_name = lv_name;
 
 	init_socket();
 
@@ -53,7 +53,7 @@ bool CCDC::send_message(Parser& msg)
 
 void CCDC::start()
 {
-	Parser cmd("create", volume);
+	Parser cmd("create", lv_name);
 	send_message(cmd);
 
 	char buf[4096];
@@ -74,6 +74,9 @@ void CCDC::start()
 				proc_status(cmd);
 			else if(cmd.get_protocol() == "change")
 				proc_change(cmd);
+			else if(cmd.get_protocol() == "create")
+				proc_create(cmd);
+
 		}
 	}
 
@@ -86,6 +89,14 @@ string CCDC::get_status()
 	return "1";
 }
 
+void CCDC::proc_create(Parser& cmd)
+{
+	// to do
+	stringstream ss(cmd.get_value());
+	ss >> size;
+	cout << "Create Size to " << size << endl;
+}
+
 void CCDC::proc_status(Parser& cmd)
 {
 	Parser msg("status", get_status());
@@ -94,5 +105,9 @@ void CCDC::proc_status(Parser& cmd)
 
 void CCDC::proc_change(Parser& cmd)
 {
+	// to do
+	stringstream ss(cmd.get_value());
+	ss >> size;
 
+	cout << "Change Size to " << size << endl;
 }

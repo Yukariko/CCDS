@@ -10,11 +10,13 @@ using namespace std;
 class CCDC
 {
 public:
-	CCDC(const string& ip, int port, const string& volume);
+	CCDC(const string& ip, int port, const string& lv_name);
 	void start();
 
 protected:
 	string get_status();
+
+	void proc_create(Parser& cmd);
 	void proc_status(Parser& cmd);
 	void proc_change(Parser& cmd);
 
@@ -24,7 +26,9 @@ protected:
 private:
 	string ip;
 	int port;
-	string volume;
+	string lv_name;
+
+	uint64_t size = 0;
 
 	MessageQueue msg_queue;
 

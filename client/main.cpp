@@ -10,7 +10,7 @@ int main(int argc, char **argv)
 {
 	if(argc < 4)
 	{
-		printf("Usage : %s ip port volume\n",argv[0]);
+		printf("Usage : %s ip port lv_name\n",argv[0]);
 		exit(1);
 	}
 
