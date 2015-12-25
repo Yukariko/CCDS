@@ -22,7 +22,7 @@ CCDC::CCDC(const string& ip, int port, const string& lv_name)
 
 void CCDC::init_config()
 {
-
+	nbd.set_ip(ip);
 }
 
 void CCDC::init_socket()

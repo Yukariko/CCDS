@@ -32,6 +32,11 @@ NBD::NBD()
 		cout << "[Warning] ccdc.conf not found" << endl;
 }
 
+void NBD::set_ip(const string& ip)
+{
+	this->ip = ip;
+}
+
 void NBD::set_port(int port)
 {
 	this->port = port;
@@ -40,7 +45,7 @@ void NBD::set_port(int port)
 void NBD::start()
 {
 	char buf[4096];
-	sprintf(buf, "nbd-client %s %d /dev/%s -b 4096 &", ip.c_str(), nbd_port, config["nbd_device"].c_str());
+	sprintf(buf, "nbd-client %s %d /dev/%s -b 4096 &", ip.c_str(), port, config["nbd_device"].c_str());
 	if(system(buf) != 0)
 	{
 		cout << "[Error] nbd refresh error" << endl;
