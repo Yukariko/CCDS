@@ -4,6 +4,7 @@
 #include <cstdlib>
 #include <cstdio>
 #include <cstring>
+#include <sstream>
 #include "ccdc.h"
 
 CCDC::CCDC(const string& ip, int port, const string& lv_name)

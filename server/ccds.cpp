@@ -2,6 +2,7 @@
 #include <cstdio>
 #include <cstdlib>
 #include <cstring>
+#include <sstream>
 
 #include "ccds.h"
 
@@ -26,6 +27,14 @@ void CCDS::start()
 
 	while(1)
 	{
+		vector<Status>& status = channel->get_client_status();
+		int client_num = status.size();
+		while(N < client_num)
+		{
+			create(status[N]);
+			N++;
+		}
+
 		for(int i=0; i < N; i++)
 		{
 			if(status[i].size == 0)
@@ -34,14 +43,6 @@ void CCDS::start()
 		}
 
 		sleep(10);
-
-		vector<Status>& status = channel->get_client_status();
-		int client_num = status.size();
-		while(N < client_num)
-		{
-			create(status[N]);
-			N++;
-		}
 
 		for(int i=0; i < N; i++)
 		{
