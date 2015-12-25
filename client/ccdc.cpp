@@ -115,7 +115,7 @@ void CCDC::start()
 	close(sock);
 }
 
-void CCDC::nbd_refresh(int nbd_port)
+void CCDC::nbd_refresh()
 {
 	char buf[4096];
 	sprintf(buf, "nbd-client %s %d /dev/%s -b 4096 &", ip.c_str(), nbd_port, config["nbd_device"].c_str());

@@ -22,7 +22,7 @@ protected:
 	void proc_status(Parser& cmd);
 	void proc_change(Parser& cmd);
 
-	void nbd_refresh(int nbd_port);
+	void nbd_refresh();
 
 	void init_config();
 	void init_socket();
