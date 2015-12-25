@@ -15,11 +15,11 @@ public:
 
 protected:
 	string get_status();
-	void proc_status(const Parser& cmd);
-	void proc_change(const Parser& cmd);
+	void proc_status(Parser& cmd);
+	void proc_change(Parser& cmd);
 
 	void init_socket();
-	bool send_message(const Parser& msg);
+	bool send_message(Parser& msg);
 
 private:
 	string ip;

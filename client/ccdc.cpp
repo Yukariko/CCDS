@@ -39,7 +39,7 @@ void CCDC::init_socket()
 	}
 }
 
-bool CCDC::send_message(const Parser& msg)
+bool CCDC::send_message(Parser& msg)
 {
 	const string& buf = msg.get_buf();
 	bool res = send(sock, buf.c_str(), buf.length(), 0) > 0;
@@ -85,12 +85,12 @@ string CCDC::get_status()
 	return "1";
 }
 
-void CCDC::proc_status(const Parser& cmd)
+void CCDC::proc_status(Parser& cmd)
 {
 	send_message(Parser("status", get_status()));
 }
 
-void CCDC::proc_change(const Parser& cmd)
+void CCDC::proc_change(Parser& cmd)
 {
 
 }
