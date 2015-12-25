@@ -15,8 +15,9 @@ t1 = main
 t2 = ccdc
 t3 = msg_queue
 t4 = parser
+t5 = eio
 
-obj = $(t1).o $(t2).o $(t3).o $(t4).o
+obj = $(t1).o $(t2).o $(t3).o $(t4).o $(t5).o
 
 all: $(bin)
 $(bin): $(obj)

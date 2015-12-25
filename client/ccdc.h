@@ -22,8 +22,6 @@ protected:
 	void proc_change(Parser& cmd);
 
 	void init_socket();
-	void init_config();
-	void init_eio_config();
 	bool send_message(Parser& msg);
 
 private:
@@ -33,10 +31,9 @@ private:
 
 	uint64_t size = 0;
 
-	unordered_map<string, string> config;
-	unordered_map<string, int> eio_config;
-	string eio_path;
+	EIO eio;
 
+	unordered_map<string, string> config;
 	MessageQueue msg_queue;
 
 	int sock;
