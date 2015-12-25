@@ -36,7 +36,7 @@ void CCDC::init_config()
 		while(conf.getline(buf, sizeof(buf)))
 		{
 			char key[256], value[256];
-			if(sscanf(buf, "%s=%s",key,value) != 2)
+			if(sscanf(buf, "%s%s",key,value) != 2)
 			{
 				cout << "[Error] config file read error" << endl;
 				exit(1);
