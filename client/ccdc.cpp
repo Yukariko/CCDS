@@ -53,7 +53,8 @@ bool CCDC::send_message(Parser& msg)
 
 void CCDC::start()
 {
-	send_message(Parser("create", volume));
+	Parser cmd("create", volume)
+	send_message(cmd);
 
 	char buf[4096];
 
@@ -67,7 +68,7 @@ void CCDC::start()
 
 		while(!msg_queue.empty())
 		{
-			Parser cmd = Parser(msg_queue.front());
+			Parser cmd(msg_queue.front());
 			msg_queue.pop();
 			if(cmd.get_protocol() == "status")
 				proc_status(cmd);
@@ -87,7 +88,8 @@ string CCDC::get_status()
 
 void CCDC::proc_status(Parser& cmd)
 {
-	send_message(Parser("status", get_status()));
+	Parser msg("status", get_status());
+	send_message(msg);
 }
 
 void CCDC::proc_change(Parser& cmd)
