@@ -74,7 +74,7 @@ void Channel::start()
 	while((ns = accept(sock, (struct sockaddr *)&cli,  (socklen_t *)&clientlen)) != -1)
 	{
 		printf("[Notice] client %d connected!\n", idx);
-		client_status.push_back(Status(ns, 0, ""));
+		client_status.push_back(Status(ns, ""));
 		client_threads.push_back(thread(&Channel::run_client, this, ns, idx));
 		idx++;
 	}
@@ -118,8 +118,8 @@ void Channel::run_client(int client_sock, int idx)
 				int value;
 				while(ss >> key >> value)
 				{
-					auto iter = client_status[idx].find(key);
-					if(iter != client_status[idx].end())
+					auto iter = client_status[idx].status.find(key);
+					if(iter != client_status[idx].status.end())
 						iter->second = value;
 					cout << key << " " << value << ", ";
 				}
