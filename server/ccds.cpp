@@ -70,6 +70,7 @@ void CCDS::create(Status& status)
 	status.size = 50;
 
 	stringstream ss;
+	ss << 9000 + status.sock;
 	ss << status.size;
 
 	Parser msg("create", ss.str());
