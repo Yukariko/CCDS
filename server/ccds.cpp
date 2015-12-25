@@ -48,9 +48,9 @@ void CCDS::start()
 		{
 			if(status[i].size == 0)
 				continue;
-			if(status[i].status >= 1 && status[i].size <= 50)
+			if(status[i].size <= 50 && status[i].status["nr_blocks"] > 1)
 			{
-				printf("client %s 's status upper %d\n", status[i].lv_name.c_str(), status[i].status);
+				cout << "client " << status[i].lv_name << "'s cache size up" << endl;
 				cache_up(status[i]);
 			}
 		}

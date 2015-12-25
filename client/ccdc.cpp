@@ -131,7 +131,7 @@ void CCDC::start()
 		}
 	}
 
-	perror("connection closed");
+	perror("[Notice] connection closed");
 	close(sock);
 }
 

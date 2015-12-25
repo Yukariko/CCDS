@@ -5,15 +5,16 @@
 #include <atomic>
 #include <vector>
 #include <iostream>
+#include <unordered_map>
 #include "parser.h"
 
 using namespace std;
 
 struct Status
 {
-	Status(int sock, int status, const string& lv_name) : sock(sock), status(status), lv_name(lv_name) {}
+	Status(int sock, const string& lv_name);
 	int sock;
-	int status;
+	unordered_map<string, int> status;
 	uint64_t size = 0;
 	string lv_name;
 };

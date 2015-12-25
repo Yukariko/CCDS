@@ -13,6 +13,20 @@ int Channel::port;
 vector<thread> Channel::client_threads;
 vector<Status> Channel::client_status;
 
+
+Status::Status(int sock, const string& lv_name) : sock(sock), lv_name(lv_name)
+{
+	status["nr_blocks"] = 0;
+	status["nr_dirty"] = 0;
+	status["nr_sets"] = 0;
+	status["nr_blocks"] = 0;
+	status["reads"] = 0;
+	status["read_hits"] = 0;
+	status["writes"] = 0;
+	status["write_hits"] = 0;
+}
+
+
 Channel::Channel(int port)
 {
 	this->port = port;
@@ -24,7 +38,7 @@ void Channel::init_socket()
 	sock = socket(PF_INET, SOCK_STREAM, 0);
 	if(sock == -1)
 	{
-		perror("socket");
+		perror("[Error] socket");
 		exit(1);
 	}
 
@@ -39,13 +53,13 @@ void Channel::init_socket()
 
 	if(bind(sock, (struct sockaddr*)&ref_adr, sizeof(ref_adr)))
 	{
-		perror("bind");
+		perror("[Error] bind");
 		exit(1);
 	}
 
 	if(listen(sock, 0xFFF))
 	{
-		perror("listen");
+		perror("[Error] listen");
 		exit(1);
 	}
 }
@@ -59,7 +73,7 @@ void Channel::start()
 	int idx = 0;
 	while((ns = accept(sock, (struct sockaddr *)&cli,  (socklen_t *)&clientlen)) != -1)
 	{
-		printf("client %d connected!\n", idx);
+		printf("[Notice] client %d connected!\n", idx);
 		client_status.push_back(Status(ns, 0, ""));
 		client_threads.push_back(thread(&Channel::run_client, this, ns, idx));
 		idx++;
@@ -94,18 +108,27 @@ void Channel::run_client(int client_sock, int idx)
 
 			if(msg.get_protocol() == "create")
 			{
-				client_status[idx].lv_name = msg.get_value();
-				printf("client %d name %s\n", idx, client_status[idx].lv_name.c_str());
+				msg.get_value() >> client_status[idx].lv_name;
+				printf("[Notice] client %d name %s\n", idx, client_status[idx].lv_name.c_str());
 			}
 			else if(msg.get_protocol() == "status")
 			{
-				client_status[idx].status = atoi(msg.get_value().c_str());
-				printf("client %d status %d\n", idx, client_status[idx].status);
+				stringstream& ss = msg.get_value();
+				string key;
+				int value;
+				while(ss >> key >> value)
+				{
+					auto iter = client_status[idx].find(key);
+					if(iter != client_status[idx].end())
+						iter->second = value;
+					cout << key << " " << value << ", ";
+				}
+				cout << endl;
 			}
 		}
 	}
 
-	printf("client %d connection close\n", idx);
+	printf("[Notice] client %d connection close\n", idx);
 	client_status[idx].size = 0;
 	close(client_sock);
 }
@@ -116,7 +139,7 @@ bool Channel::send_message(int client_sock, Parser& msg)
 	bool res = send(client_sock, buf.c_str(), buf.length(), 0) > 0;
 	if(!res)
 	{
-		string error = "send_message_fail " + buf;
+		string error = "[Error] send_message_fail " + buf;
 		perror(error.c_str());
 	}
 	return res;

@@ -7,7 +7,7 @@ Parser::Parser(const string& buf)
 	if(offset != string::npos)
 	{
 		this->protocol = buf.substr(0, offset);
-		this->value = buf.substr(offset+1);
+		this->value.str(buf.substr(offset+1));
 	}
 	else
 		this->protocol = buf;
@@ -19,7 +19,7 @@ Parser::Parser(const string& buf)
 Parser::Parser(const string& protocol, const string& value)
 {
 	this->protocol = protocol;
-	this->value = value;
+	this->value.str(value);
 	sync = false;
 }
 
@@ -28,7 +28,7 @@ const string& Parser::get_protocol() const
 	return protocol;
 }
 
-const string& Parser::get_value() const
+stringstream& Parser::get_value()
 {
 	return value;
 }
@@ -38,10 +38,10 @@ const string& Parser::get_buf()
 	if(sync)
 		return buf;
 	buf = protocol;
-	if(value.length() > 0)
+	if(value.str().length() > 0)
 	{
 		buf += " ";
-		buf += value;
+		buf += value.str();
 	}
 	buf += "\n";
 	sync = true;
@@ -56,6 +56,6 @@ void Parser::set_protocol(const string& protocol)
 
 void Parser::set_value(const string& value)
 {
-	this->value = value;
+	this->value.str(value);
 	sync = false;
 }

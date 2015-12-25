@@ -2,6 +2,7 @@
 #define PARSER_H
 
 #include <iostream>
+#include <sstream>
 
 using namespace std;
 
@@ -12,7 +13,7 @@ public:
 	Parser(const string& protocol, const string& value);
 
 	const string& get_protocol() const;
-	const string& get_value() const;
+	stringstream& get_value();
 	const string& get_buf();
 
 	void set_protocol(const string& protocol);
@@ -21,7 +22,7 @@ public:
 private:
 	string buf;
 	string protocol;
-	string value;
+	stringstream value;
 	size_t offset;
 	bool sync;
 };
