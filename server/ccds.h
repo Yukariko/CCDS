@@ -16,6 +16,7 @@ public:
 	void start();
 
 	void cache_up(Status& status);
+	void create(Status& status);
 
 private:
 	LVM lvm;

@@ -22,33 +22,66 @@ void CCDS::start()
 
 	Parser check_status("status");
 
+	int N = 0;
+
 	while(1)
 	{
-		sleep(5);
+		for(int i=0; i < N; i++)
+		{
+			if(status[i].size == 0)
+				continue;
+			Channel::send_message(status[i].sock, check_status);
+		}
+
+		sleep(10);
 
 		vector<Status>& status = channel->get_client_status();
-		int N = status.size();
+		int client_num = status.size();
+		while(N < client_num)
+		{
+			create(status[N]);
+			N++;
+		}
 
 		for(int i=0; i < N; i++)
 		{
-			if(status[i].status >= 1 && status[i].size < 50)
+			if(status[i].size == 0)
+				continue;
+			if(status[i].status >= 1 && status[i].size <= 50)
 			{
-				printf("client %s 's status upper %d\n", status[i].volume.c_str(), status[i].status);
+				printf("client %s 's status upper %d\n", status[i].lv_name.c_str(), status[i].status);
 				cache_up(status[i]);
 			}
 		}
 
-		for(int i=0; i < N; i++)
-		{
-			channel->send_message(status[i].sock, check_status);
-		}
+
 	}
+}
+
+void CCDS::create(Status& status)
+{
+	if(lvm.lv_create(status.lv_name, 50) == false)
+		return;
+	
+	status.size = 50;
+
+	stringstream ss;
+	ss << status.size;
+
+	Parser msg("create", ss.str());
+	Channel::send_message(status.sock, msg);
 }
 
 void CCDS::cache_up(Status& status)
 {
-	//to do
-	if(lvm.lv_size_up(status.volume, 50) == false)
+	if(lvm.lv_size_up(status.lv_name, 50) == false)
 		return; 
 	status.size += 50;
+
+	stringstream ss;
+	ss << status.size;
+
+	Parser msg("change", ss.str());
+	Channel::send_message(status.sock, msg);
+
 }

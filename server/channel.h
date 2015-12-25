@@ -11,11 +11,11 @@ using namespace std;
 
 struct Status
 {
-	Status(int sock, int status, const string& volume) : sock(sock), status(status), volume(volume) {}
+	Status(int sock, int status, const string& lv_name) : sock(sock), status(status), lv_name(lv_name) {}
 	int sock;
 	int status;
-	int size = 0;
-	string volume;
+	uint64_t size = 0;
+	string lv_name;
 };
 
 class Channel
@@ -28,7 +28,7 @@ public:
 	
 	vector<Status>& get_client_status();
 
-	bool send_message(int client_sock, Parser& msg);
+	static bool send_message(int client_sock, Parser& msg);
 
 private:
 	static vector<thread> client_threads;

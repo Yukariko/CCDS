@@ -94,8 +94,8 @@ void Channel::run_client(int client_sock, int idx)
 
 			if(msg.get_protocol() == "create")
 			{
-				client_status[idx].volume = msg.get_value();
-				printf("client %d name %s\n", idx, client_status[idx].volume.c_str());
+				client_status[idx].lv_name = msg.get_value();
+				printf("client %d name %s\n", idx, client_status[idx].lv_name.c_str());
 			}
 			else if(msg.get_protocol() == "status")
 			{
@@ -106,6 +106,7 @@ void Channel::run_client(int client_sock, int idx)
 	}
 
 	printf("client %d connection close\n", idx);
+	client_status[idx].size = 0;
 	close(client_sock);
 }
 
