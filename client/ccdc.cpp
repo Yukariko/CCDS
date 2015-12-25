@@ -39,9 +39,10 @@ void CCDC::init_socket()
 	}
 }
 
-bool CCDC::send_message(const string& msg)
+bool CCDC::send_message(const Parser& msg)
 {
-	bool res = send(sock, msg.c_str(), msg.length(), 0) > 0;
+	const string& buf = msg.get_buf();
+	bool res = send(sock, buf.c_str(), buf.length(), 0) > 0;
 	if(!res)
 	{
 		string error = "send_message_fail " + msg;
@@ -52,8 +53,7 @@ bool CCDC::send_message(const string& msg)
 
 void CCDC::start()
 {
-	string msg = "create " + volume + "\n";
-	send_message(msg);
+	send_message(Parser("create", volume));
 
 	char buf[4096];
 
@@ -67,25 +67,34 @@ void CCDC::start()
 
 		while(!msg_queue.empty())
 		{
-			const string& cmd = msg_queue.front();
-			printf("%s\n", cmd.c_str());
-			if(cmd.compare(0, 6, "status") == 0)
-			{
-				string msg = cmd;
-				msg += ' ';
-				get_status(msg);
-				if(send_message(msg) == false)
-					break;
-			}
+			Parser cmd = Parser(msg_queue.front());
 			msg_queue.pop();
+			if(cmd.get_protocol() == "status"))
+				proc_status(cmd);
+			else if(cmd.get_protocol() == "change")
+				proc_change(cmd);
 		}
 	}
 
-	perror("connection close");
+	perror("connection closed");
+	close(sock);
 }
 
-void CCDC::get_status(string& msg)
+string CCDC::get_status()
 {
-	//to do
-	msg += "1\n";
+	return "1";
+}
+
+void CCDC::proc_status(const Parser& cmd)
+{
+	Parser msg;
+	msg.set_protocol("status");
+	msg.set_value(get_status());
+
+	send_message(msg);
+}
+
+void CCDC::proc_change(const Parser& cmd)
+{
+
 }

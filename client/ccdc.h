@@ -3,6 +3,7 @@
 
 #include <iostream>
 #include "msg_queue.h"
+#include "parser.h"
 
 using namespace std;
 
@@ -10,12 +11,15 @@ class CCDC
 {
 public:
 	CCDC(const string& ip, int port, const string& volume);
-	void init_socket();
 	void start();
 
-	void get_status(string& msg);
-	bool send_message(const string& msg);
+protected:
+	string get_status();
+	void proc_status(const Parser& cmd);
+	void proc_change(const Parser& cmd);
 
+	void init_socket();
+	bool send_message(const Parser& msg);
 
 private:
 	string ip;
