@@ -35,6 +35,8 @@ private:
 
 	uint64_t size = 0;
 
+	int nbd_port;
+
 	_EIO eio;
 
 	unordered_map<string, string> config;

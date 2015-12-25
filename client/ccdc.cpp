@@ -129,11 +129,10 @@ void CCDC::proc_create(Parser& cmd)
 {
 	// to do
 	stringstream& ss = cmd.get_value();
-	int nbd_port;
-
 	ss >> nbd_port;
 	ss >> size;
 
+	nbd_refresh();
 	eio.refresh();
 	cout << "[Notice] Create Size to " << size << endl;
 }
@@ -151,6 +150,7 @@ void CCDC::proc_change(Parser& cmd)
 	stringstream& ss = cmd.get_value();
 	ss >> size;
 
+	nbd_refresh();
 	eio.refresh();
 
 	cout << "[Notice] Change Size to " << size << endl;
