@@ -60,7 +60,7 @@ void Channel::start()
 	while((ns = accept(sock, (struct sockaddr *)&cli,  (socklen_t *)&clientlen)) != -1)
 	{
 		printf("client %d connected!\n", idx);
-		client_status.push_back(Status(sock, 0, ""));
+		client_status.push_back(Status(ns, 0, ""));
 		client_threads.push_back(thread(&Channel::run_client, this, ns, idx));
 		idx++;
 	}
@@ -89,6 +89,8 @@ void Channel::run_client(int client_sock, int idx)
 		{
 			Parser msg(msg_queue.front());
 			msg_queue.pop();
+
+			cout << msg.get_protocol() << endl;
 
 			if(msg.get_protocol() == "create")
 			{
