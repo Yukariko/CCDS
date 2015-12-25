@@ -15,7 +15,7 @@ public:
 	~CCDS();
 	void start();
 
-	void cache_up();
+	void cache_up(Status& status);
 
 private:
 	LVM lvm;
