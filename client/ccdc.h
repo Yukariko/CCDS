@@ -6,6 +6,7 @@
 #include "msg_queue.h"
 #include "parser.h"
 #include "eio.h"
+#include "nbd.h"
 
 using namespace std;
 
@@ -22,7 +23,7 @@ protected:
 	void proc_status(Parser& cmd);
 	void proc_change(Parser& cmd);
 
-	void nbd_refresh();
+	void refresh();
 
 	void init_config();
 	void init_socket();
@@ -35,8 +36,7 @@ private:
 
 	uint64_t size = 0;
 
-	int nbd_port;
-
+	NBD nbd;
 	_EIO eio;
 
 	unordered_map<string, string> config;

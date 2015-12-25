@@ -22,29 +22,7 @@ CCDC::CCDC(const string& ip, int port, const string& lv_name)
 
 void CCDC::init_config()
 {
-	config["nbd_device"] = "nbd0";
 
-	ifstream conf(CCDC_CONFIG_PATH, ifstream::in);	
-
-	if(conf.is_open())
-	{
-		char buf[256];
-		while(conf.getline(buf, sizeof(buf)))
-		{
-			char key[256], value[256];
-			if(sscanf(buf, "%s%s",key,value) != 2)
-			{
-				cout << "[Error] ccdc.conf read error" << endl;
-				exit(1);
-			}
-
-			auto iter = config.find(key);
-			if(iter != config.end())
-				iter->second = value;
-		}
-	}
-	else
-		cout << "[Warning] ccdc.conf not found" << endl;
 }
 
 void CCDC::init_socket()
@@ -115,25 +93,28 @@ void CCDC::start()
 	close(sock);
 }
 
-void CCDC::nbd_refresh()
+void CCDC::refresh()
 {
-	char buf[4096];
-	sprintf(buf, "nbd-client %s %d /dev/%s -b 4096 &", ip.c_str(), nbd_port, config["nbd_device"].c_str());
-	if(system(buf) != 0)
-	{
-		cout << "[Error] nbd refresh error" << endl;
-	}
+	eio.stop();
+	sleep(1);
+	nbd.start();
+	sleep(1);
+	eio.start();
 }
 
 void CCDC::proc_create(Parser& cmd)
 {
 	// to do
 	stringstream& ss = cmd.get_value();
+
+	int nbd_port;
 	ss >> nbd_port;
 	ss >> size;
 
-	nbd_refresh();
-	eio.refresh();
+	nbd.set_port(nbd_port);
+
+	refresh();
+
 	cout << "[Notice] Create Size to " << size << endl;
 }
 
@@ -150,8 +131,7 @@ void CCDC::proc_change(Parser& cmd)
 	stringstream& ss = cmd.get_value();
 	ss >> size;
 
-	nbd_refresh();
-	eio.refresh();
+	refresh();
 
 	cout << "[Notice] Change Size to " << size << endl;
 }

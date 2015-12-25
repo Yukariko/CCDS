@@ -1,5 +1,5 @@
-#ifndef EIO_H
-#define EIO_H
+#ifndef NBD_H
+#define NBD_H
 
 #include <iostream>
 #include <sstream>
@@ -7,17 +7,16 @@
 
 using namespace std;
 
-class _EIO
+class NBD
 {
 public:
-	_EIO();
-	void get_status(stringstream& status);
+	NBD();
 	void start();
-	void stop();
+	void set_port(int port);
 private:
+	int port;
 	unordered_map<string, string> config;
-	unordered_map<string, int> eio_config;
-	string eio_path;
 };
+
 
 #endif

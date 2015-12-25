@@ -80,14 +80,18 @@ void _EIO::get_status(stringstream& status)
 		status << pick.first << " " << pick.second << " ";
 }
 
-void _EIO::refresh()
+void _EIO::start()
+{
+	if(system(config["create_eio_path"].c_str()) != 0)
+	{
+		cout << "[Error] create eio error" << endl;
+	}
+}
+
+void _EIO::stop()
 {
 	if(system(config["delete_eio_path"].c_str()) != 0)
 	{
 		cout << "[Error] delete eio error" << endl;
-	}
-	if(system(config["create_eio_path"].c_str()) != 0)
-	{
-		cout << "[Error] create eio error" << endl;
 	}
 }
