@@ -7,10 +7,10 @@
 
 using namespace std;
 
-class EIO
+class _EIO
 {
 public:
-	EIO();
+	_EIO();
 	void get_status(stringstream& status);
 	void refresh();
 private:

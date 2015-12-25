@@ -32,7 +32,7 @@ private:
 
 	uint64_t size = 0;
 
-	EIO eio;
+	_EIO eio;
 
 	unordered_map<string, string> config;
 	MessageQueue msg_queue;

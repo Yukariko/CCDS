@@ -5,7 +5,7 @@
 
 #define EIO_CONFIG_PATH "./eio.conf"
 
-EIO::EIO()
+_EIO::_EIO()
 {
 	eio_config["nr_blocks"] = 0;
 	eio_config["nr_dirty"] = 0;
@@ -47,7 +47,7 @@ EIO::EIO()
 	conf.close();
 }
 
-void EIO::get_status(stringstream& status)
+void _EIO::get_status(stringstream& status)
 {
 	ifstream eio_status(eio_path, ifstream::in);
 	if(!eio_status.is_open())
@@ -80,7 +80,7 @@ void EIO::get_status(stringstream& status)
 		status << pick.first << " " << pick.second << " ";
 }
 
-void EIO::refresh()
+void _EIO::refresh()
 {
 	system(config["delete_eio_path"].c_str());
 	system(config["create_eio_path"].c_str());
