@@ -6,8 +6,8 @@ Parser::Parser(const string& buf)
 	offset = buf.find(" ");
 	if(offset != string::npos)
 	{
-		this->protocol = buf.substr(offset);
-		this->value = buf.substr(offset+1, buf.size());
+		this->protocol = buf.substr(0, offset);
+		this->value = buf.substr(offset+1);
 	}
 	else
 		this->protocol = buf;
@@ -38,8 +38,11 @@ const string& Parser::get_buf()
 	if(sync)
 		return buf;
 	buf = protocol;
-	buf += " ";
-	buf += value;
+	if(value.length() > 0)
+	{
+		buf += " ";
+		buf += value;
+	}
 	buf += "\n";
 	sync = true;
 	return buf;
