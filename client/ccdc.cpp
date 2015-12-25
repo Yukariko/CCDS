@@ -4,7 +4,7 @@
 #include <cstdlib>
 #include <cstdio>
 #include <cstring>
-#include <ifstream>
+#include <fstream>
 #include <sstream>
 #include "ccdc.h"
 
@@ -32,13 +32,11 @@ void CCDC::init_config()
 
 	if(conf.is_open())
 	{
-		string str;
-		while(conf.getline(str))
+		char buf[256];
+		while(conf.getline(buf, sizeof(buf)))
 		{
-			stringstream ss(str);
-
-			string key, value;
-			if(ss >> key >> value)
+			char key[256], value[256];
+			if(sscanf("%s=%s",key,value) != 2)
 			{
 				cout << "[Error] config file read error" << endl;
 				exit(1);
@@ -143,21 +141,19 @@ void CCDC::get_status(Parser& msg)
 	if(!eio_status.is_open())
 	{
 		cout << "[Error] eio config file open error" << endl;
-		status = "-1";
+		msg.get_value() << "-1";
 		return;
 	}
 
-	string str;
-	while(eio_status.getline(str))
+	char buf[256];
+	while(eio_status.getline(buf, sizeof(buf)))
 	{
-		stringstream ss(str);
-
-		string key;
+		char key[256];
 		int value;
-		if(ss >> key >> value)
+		if(sscanf("%s %d",key, &value) != 2)
 		{
 			cout << "[Error] eio config file read error" << endl;
-			status = "-1";
+			msg.get_value() << "-1";
 			return;
 		}
 

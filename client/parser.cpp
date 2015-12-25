@@ -28,7 +28,7 @@ const string& Parser::get_protocol() const
 	return protocol;
 }
 
-stringstream& Parser::get_value() const
+stringstream& Parser::get_value()
 {
 	return value;
 }
@@ -38,7 +38,7 @@ const string& Parser::get_buf()
 	if(sync)
 		return buf;
 	buf = protocol;
-	if(value.length() > 0)
+	if(value.str().length() > 0)
 	{
 		buf += " ";
 		buf += value.str();
@@ -56,6 +56,6 @@ void Parser::set_protocol(const string& protocol)
 
 void Parser::set_value(const string& value)
 {
-	this->value = value;
+	this->value.str(value);
 	sync = false;
 }
