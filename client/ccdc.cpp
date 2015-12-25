@@ -53,7 +53,7 @@ bool CCDC::send_message(Parser& msg)
 
 void CCDC::start()
 {
-	Parser cmd("create", volume)
+	Parser cmd("create", volume);
 	send_message(cmd);
 
 	char buf[4096];

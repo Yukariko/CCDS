@@ -22,7 +22,7 @@ private:
 	string buf;
 	string protocol;
 	string value;
-	int offset;
+	size_t offset;
 	bool sync;
 };
 
