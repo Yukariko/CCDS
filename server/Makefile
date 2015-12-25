@@ -3,8 +3,8 @@ INCLUDEDIRS = \
 LIBDIRS = \
 
 LIBS = \
-	-lpthread
-
+	-lpthread	-llvm2app
+	
 CXX = g++
 
 CPPFLAGS = -Wall -O -std=c++11 -g $(INCLUDEDIRS)
@@ -16,8 +16,10 @@ t1 = main
 t2 = ccds
 t3 = msg_queue
 t4 = channel
+t5 = parser
+t6 = lvm
 
-obj = $(t1).o $(t2).o $(t3).o $(t4).o
+obj = $(t1).o $(t2).o $(t3).o $(t4).o $(t5).o $(t6).o
 
 all: $(bin)
 $(bin): $(obj)

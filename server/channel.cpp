@@ -11,7 +11,7 @@
 int Channel::sock;
 int Channel::port;
 vector<thread> Channel::client_threads;
-vector<pair<string,int>> Channel::client_status;
+vector<Status> Channel::client_status;
 
 Channel::Channel(int port)
 {
@@ -60,13 +60,13 @@ void Channel::start()
 	while((ns = accept(sock, (struct sockaddr *)&cli,  (socklen_t *)&clientlen)) != -1)
 	{
 		printf("client %d connected!\n", idx);
-		client_status.push_back({"", 0});
+		client_status.push_back(Status(sock, 0, ""));
 		client_threads.push_back(thread(&Channel::run_client, this, ns, idx));
 		idx++;
 	}
 }
 
-const vector<pair<string,int>>&  Channel::get_client_status()
+vector<Status>& Channel::get_client_status()
 {
 	return client_status;
 }
@@ -87,35 +87,33 @@ void Channel::run_client(int client_sock, int idx)
 
 		while(!msg_queue.empty())
 		{
-			const string& msg = msg_queue.front();
-			printf("%s\n", msg.c_str());
-			if(msg.compare(0, 6, "create") == 0)
-			{
-				client_status[idx].first = msg.c_str() + 7;
-				printf("client %d name %s\n", idx, client_status[idx].first.c_str());
-			}
-			else if(msg.compare(0, 6, "status") == 0)
-			{
-				client_status[idx].second = atoi(msg.c_str() + 7);
-				printf("client %d status %d\n", idx, client_status[idx].second);
-			}
-
+			Parser msg(msg_queue.front());
 			msg_queue.pop();
+
+			if(msg.get_protocol() == "create")
+			{
+				client_status[idx].volume = msg.get_value();
+				printf("client %d name %s\n", idx, client_status[idx].volume.c_str());
+			}
+			else if(msg.get_protocol() == "status")
+			{
+				client_status[idx].status = atoi(msg.get_value().c_str());
+				printf("client %d status %d\n", idx, client_status[idx].status);
+			}
 		}
-		sleep(10);
-		if(send_message(client_sock, "status\n") == false)
-			break;
 	}
 
 	printf("client %d connection close\n", idx);
+	close(client_sock);
 }
 
-bool Channel::send_message(int client_sock, const string& msg)
+bool Channel::send_message(int client_sock, Parser& msg)
 {
-	bool res = send(client_sock, msg.c_str(), msg.length(), 0) > 0;
+	const string& buf = msg.get_buf();
+	bool res = send(client_sock, buf.c_str(), buf.length(), 0) > 0;
 	if(!res)
 	{
-		string error = "send_message_fail " + msg;
+		string error = "send_message_fail " + buf;
 		perror(error.c_str());
 	}
 	return res;

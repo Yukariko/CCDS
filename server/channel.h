@@ -5,8 +5,18 @@
 #include <atomic>
 #include <vector>
 #include <iostream>
+#include "parser.h"
 
 using namespace std;
+
+struct Status
+{
+	Status(int sock, int status, const string& volume) : sock(sock), status(status), volume(volume) {}
+	int sock;
+	int status;
+	int size = 0;
+	string volume;
+};
 
 class Channel
 {
@@ -16,13 +26,13 @@ public:
 	void start();
 	void run_client(int client_sock, int idx);
 	
-	const vector<pair<string,int>>& get_client_status();
+	vector<Status>& get_client_status();
 
-	bool send_message(int client_sock, const string& msg);
+	bool send_message(int client_sock, Parser& msg);
 
 private:
 	static vector<thread> client_threads;
-	static vector<pair<string,int>> client_status;
+	static vector<Status> client_status;
 	static int sock;
 	static int port;
 };

@@ -11,6 +11,7 @@ class CCDC
 {
 public:
 	CCDC(const string& ip, int port, const string& volume);
+	~CCDS();
 	void start();
 
 protected:

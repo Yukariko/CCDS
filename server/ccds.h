@@ -4,6 +4,7 @@
 #include <thread>
 #include <atomic>
 
+#include "lvm.h"
 #include "channel.h"
 
 
@@ -16,6 +17,7 @@ public:
 	void cache_up();
 
 private:
+	LVM lvm;
 	int port;
 	thread channelThread;
 	Channel *channel;
