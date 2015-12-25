@@ -53,7 +53,7 @@ void _EIO::get_status(stringstream& status)
 	if(!eio_status.is_open())
 	{
 		cout << "[Error] eio stats file open error" << endl;
-		msg.get_value() << "-1";
+		status << "-1";
 		return;
 	}
 
@@ -65,7 +65,7 @@ void _EIO::get_status(stringstream& status)
 		if(sscanf(buf, "%s %d",key, &value) != 2)
 		{
 			cout << "[Error] eio stats file read error" << endl;
-			msg.get_value() << "-1";
+			status << "-1";
 			return;
 		}
 
@@ -82,6 +82,12 @@ void _EIO::get_status(stringstream& status)
 
 void _EIO::refresh()
 {
-	system(config["delete_eio_path"].c_str());
-	system(config["create_eio_path"].c_str());
+	if(system(config["delete_eio_path"].c_str()) != 0)
+	{
+		cout << "[Error] delete eio error" << endl;
+	}
+	if(system(config["create_eio_path"].c_str()) != 0)
+	{
+		cout << "[Error] create eio error" << endl;
+	}
 }
