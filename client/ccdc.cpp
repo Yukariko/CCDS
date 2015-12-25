@@ -36,7 +36,7 @@ void CCDC::init_config()
 		while(conf.getline(buf, sizeof(buf)))
 		{
 			char key[256], value[256];
-			if(sscanf("%s=%s",key,value) != 2)
+			if(sscanf(buf, "%s=%s",key,value) != 2)
 			{
 				cout << "[Error] config file read error" << endl;
 				exit(1);
@@ -150,7 +150,7 @@ void CCDC::get_status(Parser& msg)
 	{
 		char key[256];
 		int value;
-		if(sscanf("%s %d",key, &value) != 2)
+		if(sscanf(buf, "%s %d",key, &value) != 2)
 		{
 			cout << "[Error] eio config file read error" << endl;
 			msg.get_value() << "-1";
