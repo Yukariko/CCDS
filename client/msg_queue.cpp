@@ -4,13 +4,13 @@ void MessageQueue::push(const char *buf, int len)
 {
 	for(int i=0; i < len; i++)
 	{
-		last_msg += buf[i];
 		if(buf[i] == '\n')
 		{
-			last_msg.back() = '\0';
 			msg_queue.push(last_msg);
 			last_msg = "";
 		}
+		else
+			last_msg += buf[i];
 	}
 }
 
