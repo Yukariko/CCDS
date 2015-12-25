@@ -62,7 +62,10 @@ void CCDS::start()
 void CCDS::create(Status& status)
 {
 	if(lvm.lv_create(status.lv_name, 50) == false)
-		return;
+	{
+		// lv already exist
+		//return;
+	}
 	
 	status.size = 50;
 
