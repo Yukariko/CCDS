@@ -15,8 +15,8 @@ public:
 	~CCDS();
 	void start();
 
-	double getLoadRate(const Status& status) const;
-	double getCacheHit(const Status& status) const;
+	double getLoadRate(Status& status);
+	double getCacheHit(Status& status);
 
 	void cache_up(Status& status);
 	void create(Status& status);

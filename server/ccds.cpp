@@ -57,13 +57,13 @@ void CCDS::start()
 	}
 }
 
-double CCDS::getLoadRate(const Status& status) const
+double CCDS::getLoadRate(Status& status) 
 {
 	int nr_blocks = status.status["nr_blocks"];
 	int used_blocks = status.status["nr_dirty"] + status.status["nr_sets"];
 	return (double)(used_blocks * 100) / nr_blocks;
 }
-double CCDS::getCacheHit(const Status& status) const
+double CCDS::getCacheHit(Status& status) 
 {
 	int total = status.status["writes"] + status.status["reads"];
 	int hits = status.status["write_hits"] + status.status["read_hits"];
