@@ -108,7 +108,8 @@ void Channel::run_client(int client_sock, int idx)
 
 			if(msg.get_protocol() == "create")
 			{
-				msg.get_value() >> client_status[idx].lv_name;
+				sprintf(buf, "lvol%d", client_sock);
+				client_status[idx].lv_name = buf;
 				printf("[Notice] client %d name %s\n", idx, client_status[idx].lv_name.c_str());
 			}
 			else if(msg.get_protocol() == "status")

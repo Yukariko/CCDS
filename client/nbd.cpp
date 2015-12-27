@@ -45,9 +45,19 @@ void NBD::set_port(int port)
 void NBD::start()
 {
 	char buf[4096];
-	sprintf(buf, "nbd-client %s %d /dev/%s -b 4096 &", ip.c_str(), port, config["nbd_device"].c_str());
+	sprintf(buf, "nbd-client %s %d /dev/%s -b 4096", ip.c_str(), port, config["nbd_device"].c_str());
 	if(system(buf) != 0)
 	{
-		cout << "[Error] nbd refresh error" << endl;
+		cout << "[Error] nbd start error" << endl;
+	}
+}
+
+void NBD::stop()
+{
+	char buf[4096];
+	sprintf(buf, "nbd-client -d /dev/%s", config["nbd_device"].c_str());
+	if(system(buf) != 0)
+	{
+		cout << "[Error] nbd stop error" << endl;
 	}
 }

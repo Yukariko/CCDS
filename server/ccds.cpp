@@ -42,7 +42,7 @@ void CCDS::start()
 			Channel::send_message(status[i].sock, check_status);
 		}
 
-		sleep(10);
+		sleep(30);
 
 		for(int i=0; i < N; i++)
 		{
@@ -54,8 +54,6 @@ void CCDS::start()
 				cache_up(status[i]);
 			}
 		}
-
-
 	}
 }
 
@@ -69,11 +67,21 @@ void CCDS::create(Status& status)
 	
 	status.size = 50;
 
+	int status_port = 9000 + status.sock;
+
 	stringstream ss;
-	ss << 9001 << " ";
+	ss << status_port << " ";
 	ss << status.size;
 
 	Parser msg("create", ss.str());
+
+	char buf[4096];
+	sprintf(buf, "nbd-server -C /dev/null %d /dev/vg0/%s", status_port, status.lv_name.c_str());
+	if(system(buf) != 0)
+	{
+		cout << "[Error] nbd-server create error" << endl;
+		return;
+	}
 	Channel::send_message(status.sock, msg);
 }
 

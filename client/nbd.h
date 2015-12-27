@@ -12,6 +12,7 @@ class NBD
 public:
 	NBD();
 	void start();
+	void stop();
 	void set_ip(const string& ip);
 	void set_port(int port);
 private:

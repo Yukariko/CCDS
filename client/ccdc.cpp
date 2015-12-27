@@ -10,11 +10,10 @@
 
 #define CCDC_CONFIG_PATH "./ccdc.conf"
 
-CCDC::CCDC(const string& ip, int port, const string& lv_name)
+CCDC::CCDC(const string& ip, int port)
 {
 	this->ip = ip;
 	this->port = port;
-	this->lv_name = lv_name;
 
 	init_config();
 	init_socket();
@@ -62,7 +61,7 @@ bool CCDC::send_message(Parser& msg)
 
 void CCDC::start()
 {
-	Parser cmd("create", lv_name);
+	Parser cmd("create", "");
 	send_message(cmd);
 
 	char buf[4096];
@@ -96,10 +95,13 @@ void CCDC::start()
 void CCDC::refresh()
 {
 	eio.stop();
+	sleep(5);
+	nbd.stop();
 	sleep(1);
 	nbd.start();
-	sleep(1);
+	sleep(5);
 	eio.start();
+	sleep(5);
 }
 
 void CCDC::proc_create(Parser& cmd)

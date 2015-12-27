@@ -13,7 +13,7 @@ using namespace std;
 class CCDC
 {
 public:
-	CCDC(const string& ip, int port, const string& lv_name);
+	CCDC(const string& ip, int port);
 	void start();
 
 protected:
@@ -32,7 +32,6 @@ protected:
 private:
 	string ip;
 	int port;
-	string lv_name;
 
 	uint64_t size = 0;
 
