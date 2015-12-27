@@ -8,7 +8,7 @@ using namespace std;
 
 int main(int argc, char **argv)
 {
-	if(argc != 2)
+	if(argc != 3)
 	{
 		printf("Usage : %s ip port\n",argv[0]);
 		exit(1);
