@@ -48,13 +48,26 @@ void CCDS::start()
 		{
 			if(status[i].size == 0)
 				continue;
-			if(status[i].size <= 50 && status[i].status["nr_blocks"] > 1)
+			if(getLoadRate(status[i]) >= 95 && getCacheHit(status[i]) <= 10)
 			{
 				cout << "client " << status[i].lv_name << "'s cache size up" << endl;
 				cache_up(status[i]);
 			}
 		}
 	}
+}
+
+double CCDS::getLoadRate(const Status& status) const
+{
+	int nr_blocks = status.status["nr_blocks"];
+	int used_blocks = status.status["nr_dirty"] + status.status["nr_sets"];
+	return (double)(used_blocks * 100) / nr_blocks;
+}
+double CCDS::getCacheHit(const Status& status) const
+{
+	int total = status.status["writes"] + status.status["reads"];
+	int hits = status.status["write_hits"] + status.status["read_hits"];
+	return (double)(hits * 100) / total;
 }
 
 void CCDS::create(Status& status)
