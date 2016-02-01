@@ -27,6 +27,7 @@ public:
 private:
 	LVM lvm;
 	int port;
+	int N = 0;
 	size_t pool_size = 1000;
 	thread channelThread;
 	Channel *channel;

@@ -23,8 +23,6 @@ void CCDS::start()
 
 	Parser check_status("status");
 
-	int N = 0;
-
 	while(1)
 	{
 		vector<Status>& status = channel->get_client_status();
@@ -39,7 +37,21 @@ void CCDS::start()
 
 		for(int i=0; i < N; i++)
 		{
-			if(status[i].size == 0 || status[i].running != START)
+			if(status[i].state == READY_UP)
+			{
+				if(cache_up(status[i]))
+					cout << "client " << status[i].lv_name << "'s cache size up" << endl;
+			}
+			else if(status[i].state == READY_DOWN)
+			{
+				if(cache_down(status[i]))
+					cout << "client " << status[i].lv_name << "'s cache size down" << endl;
+			}
+		}
+
+		for(int i=0; i < N; i++)
+		{
+			if(status[i].size == 0 || status[i].running != START || status[i].state != NOTHING)
 				continue;
 			Channel::send_message(status[i].sock, check_status);
 		}
@@ -48,12 +60,13 @@ void CCDS::start()
 
 		for(int i=0; i < N; i++)
 		{
-			if(status[i].size == 0 || status[i].running != START)
+			if(status[i].size == 0 || status[i].running != START || status[i].state != NOTHING)
 				continue;
 			if(getLoadRate(status[i]) >= 90 && getCacheHit(status[i]) <= 10)
 			{
 				if(cache_up(status[i]))
 					cout << "client " << status[i].lv_name << "'s cache size up" << endl;
+				break;
 			}
 		}
 	}
@@ -117,37 +130,70 @@ bool CCDS::cache_up(Status& status)
 		return false;
 	}
 
-	if(lvm.lv_size_up(status.lv_name, 50) == false)
-		return false; 
+	if(status.state == READY_UP)
+	{
+		if(lvm.lv_size_up(status.lv_name, 50) == false)
+			return false; 
 
-	pool_size -= 50;
-	status.size += 50;
+		pool_size -= 50;
+		status.size += 50;
 
-	stringstream ss;
-	ss << status.size;
+		stringstream ss;
+		ss << status.size;
 
-	Parser msg("change", ss.str());
+		Parser msg("change", ss.str());
+		Channel::send_message(status.sock, msg);
+		return true;
+	}
+
+	status.state = READY_UP;
+	Parser msg("stop", "");
 	Channel::send_message(status.sock, msg);
+
 	return true;
 }
 
 bool CCDS::cache_down()
 {
+	vector<Status>& status = channel->get_client_status();
+	for(int i=0; i < N; i++)
+		if(status[i].state == READY_DOWN)
+			return false;
 
+	for(int i=0; i < N; i++)
+	{
+		if(status[i].size > 50 && getLoadRate(status[i]) <= 10)
+		{
+			cache_down(status[i]);
+			return true;
+		}
+	}
+
+	return true;
 }
 
 bool CCDS::cache_down(Status& status)
 {
 	if(status.size <= 50)
 		return false;
-	if(lvm.lv_size_down(status.lv_name, 50) == false)
-		return false; 
-	status.size -= 50;
 
-	stringstream ss;
-	ss << status.size;
+	if(status.state == READY_DOWN)
+	{
+		if(lvm.lv_size_down(status.lv_name, 50) == false)
+			return false; 
 
-	Parser msg("change", ss.str());
+		pool_size += 50;
+		status.size -= 50;
+
+		stringstream ss;
+		ss << status.size;
+
+		Parser msg("change", ss.str());
+		Channel::send_message(status.sock, msg);
+	}
+
+	status.state = READY_DOWN;
+	Parser msg("stop", "");
 	Channel::send_message(status.sock, msg);
 	return true;
 }
