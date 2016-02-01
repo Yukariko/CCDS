@@ -84,7 +84,8 @@ void CCDC::start()
 				proc_change(cmd);
 			else if(cmd.get_protocol() == "create")
 				proc_create(cmd);
-
+			else if(cmd.get_protocol() == "stop")
+				proc_stop(cmd);
 		}
 	}
 
@@ -92,12 +93,22 @@ void CCDC::start()
 	close(sock);
 }
 
-void CCDC::refresh()
+void CCDC::cache_refresh()
+{
+	cache_stop();
+	cache_start();
+}
+
+void CCDC::cache_stop()
 {
 	eio.stop();
 	sleep(5);
 	nbd.stop();
 	sleep(1);
+}
+
+void CCDC::cache_start()
+{
 	nbd.start();
 	sleep(5);
 	eio.start();
@@ -115,7 +126,10 @@ void CCDC::proc_create(Parser& cmd)
 
 	nbd.set_port(nbd_port);
 
-	refresh();
+	cache_refresh();
+
+	Parser msg("start", "");
+	send_message(msg);
 
 	cout << "[Notice] Create Size to " << size << endl;
 }
@@ -133,7 +147,18 @@ void CCDC::proc_change(Parser& cmd)
 	stringstream& ss = cmd.get_value();
 	ss >> size;
 
-	refresh();
+	cache_start();
+
+	Parser msg("start", "");
+	send_message(msg);
 
 	cout << "[Notice] Change Size to " << size << endl;
+}
+
+void CCDC::proc_stop(Parser& cmd)
+{
+	cache_stop();
+
+	Parser msg("stop", "");
+	send_message(msg);
 }

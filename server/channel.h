@@ -10,10 +10,15 @@
 
 using namespace std;
 
+#define READY 0
+#define START 1
+#define STOP -1
+
 struct Status
 {
 	Status(int sock, const string& lv_name);
 	int sock;
+	int running;
 	unordered_map<string, int> status;
 	uint64_t size = 0;
 	string lv_name;

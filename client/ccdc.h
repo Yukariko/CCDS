@@ -22,8 +22,11 @@ protected:
 	void proc_create(Parser& cmd);
 	void proc_status(Parser& cmd);
 	void proc_change(Parser& cmd);
+	void proc_stop(Parser& cmd);
 
-	void refresh();
+	void cache_refresh();
+	void cache_start();
+	void cache_stop();
 
 	void init_config();
 	void init_socket();

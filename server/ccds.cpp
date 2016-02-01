@@ -31,13 +31,15 @@ void CCDS::start()
 		int client_num = status.size();
 		while(N < client_num)
 		{
-			create(status[N]);
-			N++;
+			if(create(status[N]))
+				N++;
+			else
+				break;
 		}
 
 		for(int i=0; i < N; i++)
 		{
-			if(status[i].size == 0)
+			if(status[i].size == 0 || status[i].running != START)
 				continue;
 			Channel::send_message(status[i].sock, check_status);
 		}
@@ -46,12 +48,12 @@ void CCDS::start()
 
 		for(int i=0; i < N; i++)
 		{
-			if(status[i].size == 0)
+			if(status[i].size == 0 || status[i].running != START)
 				continue;
-			if(getLoadRate(status[i]) >= 95 && getCacheHit(status[i]) <= 10)
+			if(getLoadRate(status[i]) >= 90 && getCacheHit(status[i]) <= 10)
 			{
-				cout << "client " << status[i].lv_name << "'s cache size up" << endl;
-				cache_up(status[i]);
+				if(cache_up(status[i]))
+					cout << "client " << status[i].lv_name << "'s cache size up" << endl;
 			}
 		}
 	}
@@ -70,13 +72,21 @@ double CCDS::getCacheHit(Status& status)
 	return (double)(hits * 100) / total;
 }
 
-void CCDS::create(Status& status)
+bool CCDS::create(Status& status)
 {
+	if(pool_size < 50)
+	{
+		cache_down();
+		return false;
+	}
+
 	if(lvm.lv_create(status.lv_name, 50) == false)
 	{
 		// lv already exist
 		//return;
 	}
+
+	pool_size -= 50;
 	
 	status.size = 50;
 
@@ -93,15 +103,24 @@ void CCDS::create(Status& status)
 	if(system(buf) != 0)
 	{
 		cout << "[Error] nbd-server create error" << endl;
-		return;
+		return false;
 	}
 	Channel::send_message(status.sock, msg);
+	return true;
 }
 
-void CCDS::cache_up(Status& status)
+bool CCDS::cache_up(Status& status)
 {
+	if(pool_size < 50)
+	{
+		cache_down();
+		return false;
+	}
+
 	if(lvm.lv_size_up(status.lv_name, 50) == false)
-		return; 
+		return false; 
+
+	pool_size -= 50;
 	status.size += 50;
 
 	stringstream ss;
@@ -109,5 +128,26 @@ void CCDS::cache_up(Status& status)
 
 	Parser msg("change", ss.str());
 	Channel::send_message(status.sock, msg);
+	return true;
+}
 
+bool CCDS::cache_down()
+{
+
+}
+
+bool CCDS::cache_down(Status& status)
+{
+	if(status.size <= 50)
+		return false;
+	if(lvm.lv_size_down(status.lv_name, 50) == false)
+		return false; 
+	status.size -= 50;
+
+	stringstream ss;
+	ss << status.size;
+
+	Parser msg("change", ss.str());
+	Channel::send_message(status.sock, msg);
+	return true;
 }

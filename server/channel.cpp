@@ -16,6 +16,7 @@ vector<Status> Channel::client_status;
 
 Status::Status(int sock, const string& lv_name) : sock(sock), lv_name(lv_name)
 {
+	running = STOP;
 	status["nr_blocks"] = 0;
 	status["nr_dirty"] = 0;
 	status["nr_sets"] = 0;
@@ -125,6 +126,14 @@ void Channel::run_client(int client_sock, int idx)
 					cout << key << " " << value << ", ";
 				}
 				cout << endl;
+			}
+			else if(msg.get_protocol() == "stop")
+			{
+				client_status[idx].running = false;
+			}
+			else if(msg.get_protocol() == "start")
+			{
+				client_status[idx].running = true;
 			}
 		}
 	}
