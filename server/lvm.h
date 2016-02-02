@@ -11,6 +11,7 @@ class LVM
 public:
 	bool lv_create(const string& lv_name, int size);
 	bool lv_size_up(const string& lv_name, int size);
+	bool lv_size_down(const string& lv_name, int size);
 private:
 };
 

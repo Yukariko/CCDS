@@ -9,6 +9,14 @@ bool LVM::lv_size_up(const string& lv_name, int size)
 	return system(buf) == 0;
 }
 
+bool LVM::lv_size_down(const string& lv_name, int size)
+{
+	char buf[4096];
+	sprintf(buf, "lvextend -L-%dMB /dev/vg0/%s", size, lv_name.c_str());
+	return system(buf) == 0;
+}
+
+
 bool LVM::lv_create(const string& lv_name, int size)
 {
 	char buf[4096];
