@@ -62,7 +62,7 @@ void CCDS::start()
 		{
 			if(status[i].size == 0 || status[i].running != START || status[i].state != NOTHING)
 				continue;
-			if(getLoadRate(status[i]) >= 90 && getCacheHit(status[i]) <= 10)
+			if(getLoadRate(status[i]) >= 10 && getCacheHit(status[i]) <= 10)
 			{
 				if(cache_up(status[i]))
 					cout << "client " << status[i].lv_name << "'s cache size up" << endl;
@@ -130,10 +130,12 @@ bool CCDS::cache_up(Status& status)
 		return false;
 	}
 
-	if(status.state == READY_UP)
+	if(status.running == STOP && status.state == READY_UP)
 	{
 		if(lvm.lv_size_up(status.lv_name, 50) == false)
 			return false; 
+
+		status.state = NOTHING;
 
 		pool_size -= 50;
 		status.size += 50;
@@ -177,10 +179,12 @@ bool CCDS::cache_down(Status& status)
 	if(status.size <= 50)
 		return false;
 
-	if(status.state == READY_DOWN)
+	if(status.running == STOP && status.state == READY_DOWN)
 	{
 		if(lvm.lv_size_down(status.lv_name, 50) == false)
 			return false; 
+
+		status.state = NOTHING;
 
 		pool_size += 50;
 		status.size -= 50;
